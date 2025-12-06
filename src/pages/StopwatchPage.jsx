@@ -1,14 +1,14 @@
 // src/pages/StopwatchPage.jsx
 import React, { useEffect, useCallback } from "react";
 import { useStopwatch } from "../contexts/StopwatchContext";
-import { Play, Pause, Flag, RotateCcw, Timer } from "lucide-react";
+import { Play, Pause, Flag, RotateCcw, Timer, Zap } from "lucide-react";
 
 // Components
 import StopwatchDisplay from "../components/stopwatch/StopwatchDisplay";
 import LapsList from "../components/stopwatch/LapsList";
 import ControlButton from "../components/stopwatch/ControlButton";
 import SEO from "../components/SEO";
-
+import FullscreenButton from "../components/fullscreen/FullscreenButton";
 export const StopwatchPage = () => {
   const {
     time,
@@ -26,27 +26,27 @@ export const StopwatchPage = () => {
   // Keyboard shortcuts
   useEffect(() => {
     const handleKeyDown = (e) => {
-      // Ignore if typing in input
-      if (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA") return;
+      if (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA")
+        return;
 
       switch (e.key) {
-        case " ": // Space - Start/Stop
+        case " ":
           e.preventDefault();
           toggle();
           break;
-        case "l": // L - Lap
+        case "l":
         case "L":
           e.preventDefault();
           if (isRunning) lap();
           break;
-        case "r": // R - Reset
+        case "r":
         case "R":
           if (!e.ctrlKey && !e.metaKey) {
             e.preventDefault();
             reset();
           }
           break;
-        case "Escape": // Esc - Stop
+        case "Escape":
           e.preventDefault();
           stop();
           break;
@@ -59,140 +59,159 @@ export const StopwatchPage = () => {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [toggle, lap, reset, stop, isRunning]);
 
-  // Clear laps handler
-  const handleClearLaps = useCallback(() => {
-    // Only clear laps, not reset entire stopwatch
-    // This would need to be added to context if desired
-  }, []);
-
   return (
-    <div className="min-h-[80vh] flex flex-col items-center justify-center px-4 py-8">
-          <SEO 
-        title="Free Online Stopwatch" 
+    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 dark:from-gray-50 dark:via-white dark:to-gray-100 px-4 py-8 lg:py-12">
+      <SEO
+        title="Free Online Stopwatch"
         description="Precise online stopwatch with split/lap time recording. Ideal for sports, games, and measuring time intervals. Tracks laps and saves progress."
         keywords="online stopwatch, stopwatch with laps, timer, split timer, chronometer, sports timer, race timer"
         url="/stopwatch"
       />
-      <div className="w-full max-w-4xl flex flex-col items-center gap-8">
-        
+
+      <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="text-center">
-          <div className="flex items-center justify-center gap-3 mb-2">
-            <Timer className="w-6 h-6 text-emerald-400 dark:text-emerald-600" />
-            <h1 className="text-2xl font-bold text-slate-200 dark:text-slate-900 tracking-wide">
-              Stopwatch
+        <div className="text-center mb-8 lg:mb-12">
+          <div className="inline-flex items-center justify-center gap-3 mb-3 px-6 py-2 bg-gradient-to-r from-emerald-500/10 to-cyan-500/10 dark:from-emerald-500/20 dark:to-cyan-500/20 rounded-full border border-emerald-500/20 dark:border-emerald-500/30">
+            <Timer className="w-5 h-5 text-emerald-400 dark:text-emerald-600 animate-pulse" />
+            <h1 className="text-xl lg:text-2xl font-bold bg-gradient-to-r from-emerald-400 to-cyan-400 dark:from-emerald-600 dark:to-cyan-600 bg-clip-text text-transparent">
+              Precision Stopwatch
             </h1>
           </div>
-          <p className="text-sm text-slate-500 dark:text-slate-500">
-            Track time with precision and record laps
+          <p className="text-sm lg:text-base text-slate-400 dark:text-slate-600">
+            Track time with millisecond precision • Record unlimited laps
           </p>
         </div>
 
-        {/* Main content - Two column on larger screens */}
-        <div className="w-full grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-start">
-          
-          {/* Left side - Stopwatch display and controls */}
-          <div className="flex flex-col items-center gap-8">
-            {/* Display */}
-            <StopwatchDisplay time={time} isRunning={isRunning} size="large" />
+        {/* Main Container */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8">
+          {/* Left Column - Stopwatch Display & Controls */}
+          <div className="lg:col-span-7">
+            {/* Stopwatch Card */}
+            <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-900/90 to-slate-800/90 dark:from-white dark:to-gray-50 backdrop-blur-xl border border-slate-700/50 dark:border-gray-200 shadow-2xl">
+              {/* Animated background effect */}
+              <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 via-transparent to-cyan-500/5 dark:from-emerald-500/10 dark:to-cyan-500/10"></div>
 
-            {/* Controls */}
-            <div className="flex flex-wrap gap-3 justify-center">
-              {!isRunning ? (
-                <ControlButton
-                  onClick={start}
-                  variant="start"
-                  size="lg"
-                  icon={Play}
-                >
-                  Start
-                </ControlButton>
-              ) : (
-                <ControlButton
-                  onClick={stop}
-                  variant="stop"
-                  size="lg"
-                  icon={Pause}
-                >
-                  Stop
-                </ControlButton>
+              {/* Glow effect when running */}
+              {isRunning && (
+                <div className="absolute inset-0 animate-pulse">
+                  <div className="absolute top-0 left-1/2 -translate-x-1/2 w-1/2 h-1/2 bg-emerald-500/20 blur-3xl rounded-full"></div>
+                </div>
               )}
 
-              <ControlButton
-                onClick={lap}
-                variant="lap"
-                size="lg"
-                icon={Flag}
-                disabled={!isRunning}
-              >
-                Lap
-              </ControlButton>
+              <div className="relative p-8 lg:p-12">
+                {/* Status Badge */}
+                <div className="flex justify-center mb-6">
+                  <div
+                    className={`inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-semibold transition-all duration-300 ${
+                      isRunning
+                        ? "bg-emerald-500/20 text-emerald-400 dark:bg-emerald-500/30 dark:text-emerald-600 shadow-lg shadow-emerald-500/20"
+                        : "bg-slate-700/50 text-slate-400 dark:bg-gray-200 dark:text-slate-600"
+                    }`}
+                  >
+                    <span
+                      className={`w-2 h-2 rounded-full ${
+                        isRunning
+                          ? "bg-emerald-400 animate-pulse"
+                          : "bg-slate-500"
+                      }`}
+                    ></span>
+                    {isRunning ? "RUNNING" : "STOPPED"}
+                  </div>
+                </div>
 
-              <ControlButton
-                onClick={reset}
-                variant="reset"
-                size="lg"
-                icon={RotateCcw}
-                disabled={time === 0}
-              >
-                Reset
-              </ControlButton>
+                {/* Display */}
+                <StopwatchDisplay time={time} isRunning={isRunning} />
+
+                {/* Controls */}
+                <div className="flex flex-wrap gap-3 justify-center mt-10">
+                  {!isRunning ? (
+                    <ControlButton
+                      onClick={start}
+                      variant="start"
+                      icon={Play}
+                      disabled={false}
+                    >
+                      Start
+                    </ControlButton>
+                  ) : (
+                    <ControlButton onClick={stop} variant="stop" icon={Pause}>
+                      Pause
+                    </ControlButton>
+                  )}
+
+                  <ControlButton
+                    onClick={lap}
+                    variant="lap"
+                    icon={Flag}
+                    disabled={!isRunning}
+                  >
+                    Lap
+                  </ControlButton>
+
+                  <ControlButton
+                    onClick={reset}
+                    variant="reset"
+                    icon={RotateCcw}
+                    disabled={time === 0}
+                  >
+                    Reset
+                  </ControlButton>
+                  {/* Fullscreen button */}
+                  <FullscreenButton
+                    mode="stopwatch"
+                    variant="outline"
+                    size="md"
+                    showLabel={true}
+                  />
+                </div>
+
+                {/* Quick Stats */}
+                {(lapCount > 0 || time > 0) && (
+                  <div className="grid grid-cols-2 gap-4 mt-8 pt-8 border-t border-slate-700/50 dark:border-gray-200">
+                    <div className="text-center">
+                      <p className="text-xs text-slate-500 dark:text-slate-600 mb-1 uppercase tracking-wider">
+                        Total Laps
+                      </p>
+                      <p className="text-2xl font-bold text-emerald-400 dark:text-emerald-600 font-mono">
+                        {lapCount}
+                      </p>
+                    </div>
+                    <div className="text-center">
+                      <p className="text-xs text-slate-500 dark:text-slate-600 mb-1 uppercase tracking-wider">
+                        Elapsed
+                      </p>
+                      <p className="text-2xl font-bold text-cyan-400 dark:text-cyan-600 font-mono">
+                        {formatTotalTime(time)}
+                      </p>
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
 
-            {/* Keyboard shortcuts hint */}
-            <div className="flex flex-wrap justify-center gap-4 text-xs text-slate-500 dark:text-slate-400">
-              <div className="flex items-center gap-1">
-                <kbd className="px-1.5 py-0.5 bg-slate-800 dark:bg-gray-200 rounded text-[10px] font-mono">
-                  Space
-                </kbd>
-                <span>{isRunning ? "Stop" : "Start"}</span>
+            {/* Keyboard Shortcuts */}
+            <div className="mt-6 p-4 rounded-2xl bg-slate-900/50 dark:bg-gray-50 border border-slate-800/50 dark:border-gray-200">
+              <div className="flex items-center gap-2 mb-3">
+                <Zap className="w-4 h-4 text-amber-400 dark:text-amber-600" />
+                <h3 className="text-xs font-semibold text-slate-400 dark:text-slate-600 uppercase tracking-wider">
+                  Keyboard Shortcuts
+                </h3>
               </div>
-              <div className="flex items-center gap-1">
-                <kbd className="px-1.5 py-0.5 bg-slate-800 dark:bg-gray-200 rounded text-[10px] font-mono">
-                  L
-                </kbd>
-                <span>Lap</span>
+              <div className="flex flex-wrap gap-3 text-xs">
+                <ShortcutKey
+                  keyName="Space"
+                  action={isRunning ? "Pause" : "Start"}
+                />
+                <ShortcutKey keyName="L" action="Lap" />
+                <ShortcutKey keyName="R" action="Reset" />
+                <ShortcutKey keyName="Esc" action="Stop" />
               </div>
-              <div className="flex items-center gap-1">
-                <kbd className="px-1.5 py-0.5 bg-slate-800 dark:bg-gray-200 rounded text-[10px] font-mono">
-                  R
-                </kbd>
-                <span>Reset</span>
-              </div>
-            </div>
-
-            {/* Session info (mobile only, shows above laps) */}
-            <div className="lg:hidden w-full max-w-lg">
-              <LapsList laps={laps} lapStats={lapStats} />
             </div>
           </div>
 
-          {/* Right side - Laps list (desktop only) */}
-          <div className="hidden lg:flex flex-col items-center">
+          {/* Right Column - Laps */}
+          <div className="lg:col-span-5">
             <LapsList laps={laps} lapStats={lapStats} />
-            
-            {/* Additional stats */}
-            {lapCount > 0 && (
-              <div className="mt-6 w-full max-w-lg p-4 bg-slate-900/50 dark:bg-gray-50 rounded-xl border border-slate-800/60 dark:border-gray-200">
-                <h3 className="text-xs font-semibold text-slate-400 dark:text-slate-600 uppercase tracking-wider mb-3">
-                  Session Summary
-                </h3>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <p className="text-xs text-slate-500">Total Laps</p>
-                    <p className="text-lg font-bold font-mono text-emerald-400 dark:text-emerald-600">
-                      {lapCount}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-xs text-slate-500">Total Time</p>
-                    <p className="text-lg font-bold font-mono text-slate-300 dark:text-slate-700">
-                      {formatTotalTime(time)}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            )}
           </div>
         </div>
       </div>
@@ -200,18 +219,24 @@ export const StopwatchPage = () => {
   );
 };
 
-// Helper function for total time display
+// Shortcut Key Component
+const ShortcutKey = ({ keyName, action }) => (
+  <div className="flex items-center gap-2">
+    <kbd className="px-2 py-1 bg-slate-800 dark:bg-gray-200 text-slate-300 dark:text-slate-700 rounded-lg text-[10px] font-mono font-semibold shadow-md border border-slate-700 dark:border-gray-300">
+      {keyName}
+    </kbd>
+    <span className="text-slate-500 dark:text-slate-600">{action}</span>
+  </div>
+);
+
+// Helper function
 const formatTotalTime = (ms) => {
   const hours = Math.floor(ms / 3600000);
   const minutes = Math.floor((ms % 3600000) / 60000);
   const seconds = Math.floor((ms % 60000) / 1000);
 
-  if (hours > 0) {
-    return `${hours}h ${minutes}m ${seconds}s`;
-  }
-  if (minutes > 0) {
-    return `${minutes}m ${seconds}s`;
-  }
+  if (hours > 0) return `${hours}h ${minutes}m`;
+  if (minutes > 0) return `${minutes}m ${seconds}s`;
   return `${seconds}s`;
 };
 
