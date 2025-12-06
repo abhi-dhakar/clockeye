@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://clockeye.com/sitemap.xml
