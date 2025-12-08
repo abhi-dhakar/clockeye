@@ -60,7 +60,7 @@ export const StopwatchPage = () => {
   }, [toggle, lap, reset, stop, isRunning]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 dark:from-gray-50 dark:via-white dark:to-gray-100 px-4 py-8 lg:py-12">
+    <div className="min-h-screen px-4 py-8 lg:py-12">
       <SEO
         title="Free Online Stopwatch"
         description="Precise online stopwatch with split/lap time recording. Ideal for sports, games, and measuring time intervals. Tracks laps and saves progress."
