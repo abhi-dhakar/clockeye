@@ -197,6 +197,7 @@ const TimerPage = () => {
       />
       <div className="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
         
+        
         {/* LEFT SIDE - Timer Circle & Controls */}
         <div className="flex flex-col items-center justify-center order-2 lg:order-1">
           {/* Worker status warning */}
